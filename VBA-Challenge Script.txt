@@ -1,0 +1,105 @@
+Sub HW()
+For Each ws In Worksheets
+ws.Range("I1") = "Ticker"
+ws.Range("P1") = "Ticker"
+ws.Range("Q1") = "Value"
+ws.Range("J1") = "Yearly Change"
+ws.Range("K1") = "Percentage Change"
+ws.Range("L1") = "Total Stock Volume"
+ws.Range("O2") = "Greatest % Increase"
+ws.Range("O3") = "Greatest % Decrease"
+ws.Range("O4") = "Greatest Total Volume"
+StartRow = 2
+StartCalc = 2
+Lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+For I = 2 To Lastrow
+
+Dim Tickersymbol As String
+Dim Tickersymbol1 As String
+Dim Tickersymbol2 As String
+Dim Tickersymbol3 As String
+Dim YearChange As Double
+Dim PercentageChange As Double
+Dim TotalStockVolume2 As Double
+Dim TotalStockVolume As Double
+Dim Value As Double
+Dim Incr_value As Double
+Dim Decr_value As Double
+Dim Great_vol As Double
+BegYear = ws.Range("C" & StartCalc)
+EndYear = ws.Range("F" & I)
+
+TotalStockVolume2 = TotalStockVolume2 + ws.Cells(I, 7).Value
+If ws.Cells(I + 1, 1).Value <> ws.Cells(I, 1) Then
+    Tickersymbol = ws.Cells(I, 1).Value
+If BegYear = 0 Then
+    PercentageChange = EndYear
+Else
+ YearChange = EndYear - BegYear
+ PercentageChange = YearChange / BegYear
+End If
+
+  ws.Range("I" & StartRow).Value = Tickersymbol
+  ws.Range("J" & StartRow).Value = YearChange
+  ws.Range("K" & StartRow).Value = PercentageChange
+  ws.Range("L" & StartRow).Value = TotalStockVolume2
+  ws.Range("K" & StartRow).NumberFormat = "0.00%"
+
+
+If ws.Range("J" & StartRow).Value >= 0 Then
+   ws.Range("J" & StartRow).Interior.ColorIndex = 4
+Else
+   ws.Range("J" & StartRow).Interior.ColorIndex = 3
+     
+ End If
+    
+    TotalStockVolume2 = 0
+    StartRow = StartRow + 1
+    StartCalc = I + 1
+End If
+Next I
+
+Incr_value = 0
+Decr_value = 0
+Great_vol = 0
+Lastrow2 = ws.Cells(Rows.Count, 11).End(xlUp).Row
+ For j = 3 To Lastrow2
+
+    
+If ws.Cells(j - 1, 11) > Incr_value And ws.Cells(j - 1, 11) > ws.Cells(j, 11) Then
+    Tickersymbol1 = ws.Cells(j - 1, 9)
+    Incr_value = ws.Cells(j - 1, 11)
+ElseIf ws.Cells(j, 11) > Incr_value And ws.Cells(j, 11) > ws.Cells(j - 1, 11) Then
+    Tickersymbol1 = ws.Cells(j, 9)
+    Incr_value = ws.Cells(j, 11)
+End If
+
+If ws.Cells(j, 11) < Decr_value And ws.Cells(j, 11) < ws.Cells(j - 1, 11) Then
+    Tickersymbol2 = ws.Cells(j, 9)
+    Decr_value = ws.Cells(j, 11)
+ElseIf ws.Cells(j - 1, 11) < Decr_value And ws.Cells(j - 1, 11) < ws.Cells(j, 11) Then
+    Tickersymbol2 = ws.Cells(j - 1, 9)
+    Decr_value = ws.Cells(j - 1, 11)
+End If
+If ws.Cells(j - 1, 12) > Great_vol And ws.Cells(j - 1, 12) > ws.Cells(j, 12) Then
+    Tickersymbol3 = ws.Cells(j - 1, 9)
+    Great_vol = ws.Cells(j - 1, 12)
+ElseIf ws.Cells(j, 12) > Great_vol And ws.Cells(j, 12) > ws.Cells(j - 1, 12) Then
+    Tickersymbol3 = ws.Cells(j, 9)
+    Great_vol = ws.Cells(j, 12)
+End If
+   ws.Cells(2, 16).Value = Tickersymbol1
+   ws.Cells(3, 16).Value = Tickersymbol2
+   ws.Cells(2, 17).Value = Incr_value
+   ws.Cells(3, 17).Value = Decr_value
+    ws.Cells(4, 16).Value = Tickersymbol3
+   ws.Cells(4, 17).Value = Great_vol
+   ws.Range("Q2:Q3").NumberFormat = "0.00%"
+   ws.Range("Q4").NumberFormat = "General"
+
+Next j
+    ws.Columns("I:Q").AutoFit
+    Next ws
+End Sub
+
+
